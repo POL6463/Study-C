@@ -15,8 +15,10 @@ int main(void)
 void swap(void)
 {
     int temp;
-    
+
     temp =a;
     a = b;
     b = temp;
 }
+// 이렇게 하면은 컴파일 오류가 난다.
+//swap 함수 안에서 a, b 가 정의되어있지 않아서
