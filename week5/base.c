@@ -4,7 +4,7 @@
 int main(void) {
     int i, k;
     int j;
-    
+    int num = 1;
     i = 1;
     for(k = 0; k < 31; k++){
         i*= 2;

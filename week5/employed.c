@@ -13,7 +13,7 @@ int main(void) {
 
     rate = (double)emp / (double)grad;
 
-    printf("취업율: %.1lf", rate * 100);
+    printf("취업율: %.1lf%%\n", rate * 100);
 
     return 0;
 }
