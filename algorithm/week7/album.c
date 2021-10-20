@@ -20,4 +20,5 @@ int main(void){
     printf("%s, %d", album[0].genre, album[0].play);
 
     return 0;
+    
 }
