@@ -17,6 +17,7 @@ int main(void){
 void isPrime(int num){
     int i, j;
     int count;
+    
 
     for(i = 2; i <= num; i++){
 
