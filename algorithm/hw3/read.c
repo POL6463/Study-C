@@ -15,21 +15,22 @@ int main(void){
 
 
 
-    printf("%d\n", row);
+    printf("%d  %d\n", row, column);
+    printf("%s\n", name);
 
     return 0;
 }
 
 void readFileName(int *row, int *column, char *arr){
     int i, temp;
-    char compName[100] = "map-input-";
-    int firstNum[100] = {0};
-    int firstNumCounter = 0;
-    int secondNum[100] = {0};
-    int secondNumCounter = 0;
+    char compName[100] = "map-input-"; //입력받은 파일 앞부분 확인하는 배열
+    int firstNum[100] = {0}; //첫번째 숫자 잠시 보관할 배열
+    int firstNumCounter = 0; //첫번째 숫자 자릿수 저장할 변수
+    int secondNum[100] = {0}; //두번째 숫자 보관할 배열
+    int secondNumCounter = 0; //두번째 숫자 자릿수 저장할 변수
 
     printf("파일 이름을 입력하세요: ");
-    scanf("%s", arr);
+    scanf("%s", arr); //파일 이름 입력받아서 arr로 저장해 main에서도 자용할 수 있게 함
 
     if (strncmp(compName, arr, 10) == 0){  //파일 이름 앞부분 비교
         printf("%s\n", arr);
@@ -40,21 +41,31 @@ void readFileName(int *row, int *column, char *arr){
     }
 
     for(int i = 0; arr[10 + i] != '-'; i++){
-        printf("%c", arr[10 + i]);
+        if(arr[10 + i] < '0' || arr[10 + i] > '9'){
+            printf("Error: Unable to open file %s", arr); //숫자 부분이 숫자가 아닌 문자가 들어오면 에러 발생
+            exit(1);
+        }
         firstNum[i] = arr[10 + i] - '0';
         firstNumCounter++;
-    }
-    printf("\n");
+    }//10번째 자리부터 '-'가 나올때 까지 읽고 숫자를 배열에 저장
 
-    temp = 0;
+    temp = 0; 
     for(i = firstNumCounter -1; i >= 0; i--){
         *row += firstNum[temp++] * pow(10, i);
+    } //앞부분 숫자 배열에 저장한걸 row 변수에 입력
+
+    for(i = 0; arr[11+firstNumCounter+i] != '.'; i++){// '.'점이 나올때까지 읽고 secondNum 배열에 저장
+        secondNum[i] = arr[11+firstNumCounter+i] - '0';
+        secondNumCounter++;
     }
 
-    printf("\n");
-    for(int i = 0; arr[i] != 0 ;i++){
-        printf("%c", arr[i]);
+    temp = 0;
+    for(i = secondNumCounter -1; i >= 0; i--){
+        *column += secondNum[temp++] * pow(10, i);
     }
+
+
+
     printf("\n");
 
 
