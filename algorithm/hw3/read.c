@@ -21,6 +21,9 @@ int main(void){
     return 0;
 }
 
+
+
+
 void readFileName(int *row, int *column, char *arr){
     int i, temp;
     char compName[100] = "map-input-"; //입력받은 파일 앞부분 확인하는 배열
@@ -54,7 +57,12 @@ void readFileName(int *row, int *column, char *arr){
         *row += firstNum[temp++] * pow(10, i);
     } //앞부분 숫자 배열에 저장한걸 row 변수에 입력
 
+
     for(i = 0; arr[11+firstNumCounter+i] != '.'; i++){// '.'점이 나올때까지 읽고 secondNum 배열에 저장
+        if(arr[11 + firstNumCounter + i] < '0' || arr[11 + firstNumCounter + i] > '9'){
+            printf("Error: Unable to open file %s", arr); //숫자 부분이 숫자가 아닌 문자가 들어오면 에러 발생
+            exit(1);
+        }
         secondNum[i] = arr[11+firstNumCounter+i] - '0';
         secondNumCounter++;
     }
@@ -62,12 +70,5 @@ void readFileName(int *row, int *column, char *arr){
     temp = 0;
     for(i = secondNumCounter -1; i >= 0; i--){
         *column += secondNum[temp++] * pow(10, i);
-    }
-
-
-
-    printf("\n");
-
-
-
+    } //secondNum에 있는 숫자를 column에 저장
 }
