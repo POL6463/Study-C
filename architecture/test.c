@@ -9,13 +9,13 @@ typedef struct node_type{
 typedef node *list;
 
 int searchList(list, int);
-void insert(list, list, int, int);
+list insert(list, list, int, int);
 void showList(list);
 
 
 int main(void){
     FILE *fp;
-    list head, tail;
+    list head = NULL, tail = NULL;
     int dat, count = 0, hit = 0;
     int nums;
 
@@ -29,30 +29,41 @@ int main(void){
         }
 
         nums = searchList(head, dat);
+        
+
         if(nums == 5){
             hit++;
-        }else if(nums == 0){
+        }
+        else if(nums == 0){
             head = (list)malloc(sizeof(node));
             head->data = dat;
             head->next = NULL;
             tail = head;
-        }else{
-            insert(head, tail, dat, nums);
+        }
+        else{
+            tail = insert(head, tail, dat, nums);
+            if(nums == 4){
+                head = head->next;
+            }
         }
 
-        
+        showList(head);
+        printf("dat : %d\n", dat);
+
 
         count++;
     }
 
     showList(head);
+
+    printf("적중률 = %d/%d\n", hit, count);
    
     return 0;
 
 }
 
 int searchList(list head, int dat){
-    list temp = head;
+    list temp;
     int count = 0;
 
 
@@ -60,7 +71,7 @@ int searchList(list head, int dat){
         return 0;
     }
     else{
-
+        temp = head;
         while(temp != NULL){
 
             if(temp->data == dat){
@@ -68,30 +79,24 @@ int searchList(list head, int dat){
             }
             else{
                 count++;
-                return count;
             }
+
             temp = temp->next;
         }
     }
-    return 0;
+    return count;
 }
 
-void insert(list head, list tail, int dat, int nums){
-    list temp;
-    if(nums == 4){
-        temp = (list)malloc(sizeof(node));
-        temp->next = NULL;
-        tail->next = temp;
-        tail = tail->next;
-        head = head->next;
-        
-    }
-    else{
-        temp = (list)malloc(sizeof(node));
-        temp->next = NULL;
-        tail->next = temp;
-        tail = tail->next;
-    }
+list insert(list head, list tail, int dat, int nums){
+    list temp = NULL;
+
+    temp = (list)malloc(sizeof(node));
+    temp->data = dat;
+    temp->next = NULL;
+    tail->next = temp;
+    tail = tail->next;
+    return tail;
+
 
 }
 
@@ -101,4 +106,5 @@ void showList(list head){
         printf("%d  ", temp->data);
         temp = temp->next;
     }
+    printf("\n");
 }
