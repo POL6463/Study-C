@@ -49,7 +49,6 @@ int main(void){
         //showList(head); //마지막으로 메모리에 있는 숫자들 출력
         //printf("dat : %d\n", dat); 
 
-
         count++;
     }
 
