@@ -27,7 +27,7 @@ int main(void){
         if(dat == 99){// 99나오면 종료
             break;
         }
-
+        
         nums = searchList(head, dat); //hit인지 아닌지 search하는 함수, 리스트에 몇개들어있는지 반환
         
         if(nums == 5){
