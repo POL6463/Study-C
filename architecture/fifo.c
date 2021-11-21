@@ -45,7 +45,6 @@ int main(void){
                 head = head->next;//만약 4개있는상태에서 hit이아닌데이터가 들어왔을때 제일 앞의 head 하나 줄임
             }
         }
-
         //showList(head); //마지막으로 메모리에 있는 숫자들 출력
         //printf("dat : %d\n", dat); 
 
