@@ -13,9 +13,9 @@ struct RGB list[1000][1000] = {0}; //RGB 값을 저장할 구조체 배열 선�
 void readFileName(int *, int *, char *); //파일 이름을 입력받고 검사, row colum값을 받는 함수
 void findMaxMin(int *, int *, int, int); //배열에서 최대 최솟값 찾아내는 함수
 void loadGrayscale(int, int, int, int); //배열에서 rgb값으로 변환 후 구조체 배열에 입력하는 함수
-void findPath(int, int, int);
+void findPath(int, int, int);//최단 경로를 찾아가면서 빨간색칠할 함수
 void outputImage(char *, int, int); //ppm파일 작성하는 함수
-int findMin(int, int, int);
+int findMin(int, int, int);//findPath에서 최솟값을 구해주는 함수
 
 int main(void){
     FILE *fp;
@@ -55,8 +55,8 @@ int main(void){
 
     loadGrayscale(max, min, row, column); //RGB값으로 변환해 입력하는 함수 호출
 
-    for(i = 0; i < row; i++){
-        findPath(i, 0, column);
+    for(i = 0; i < row; i++){//row 0부터 끝까지 재귀함수 호출
+        findPath(i, 0, column);//경로찾는 함수 호출
     }
     
     outputImage(name, row, column); //파일 작성하는 함수 호출
@@ -150,10 +150,10 @@ void loadGrayscale(int max, int min, int column, int row){
     }
 }
 
-void findPath(int row, int column, int MaxColumn){
-    int first, second, third, min;
+void findPath(int row, int column, int MaxColumn){//재귀함수 시작
+    int first, second, third, min;//최솟값을 찾기 위해서 column+1값들 저장할 변수 선언
     
-    if(column == MaxColumn){
+    if(column == MaxColumn){//재귀함수 마지막까지 도달했으면 색칠하고 리턴
         list[row][column].red = 252;
         list[row][column].green = 25;
         list[row][column].blue = 63;
@@ -161,30 +161,30 @@ void findPath(int row, int column, int MaxColumn){
         return;
     }
     else{
-        first = abs(arr[row][column] - arr[row-1][column+1]);
+        first = abs(arr[row][column] - arr[row-1][column+1]);//다음 칼럼값들 현재칼럼에 뺀 값을 절댓값으로 저장
         second = abs(arr[row][column] - arr[row][column+1]);
         third = abs(arr[row][column] - arr[row+1][column+1]);
 
-        list[row][column].red = 252;
+        list[row][column].red = 252;//우선 색칠하기
         list[row][column].green = 25;
         list[row][column].blue = 63;
 
-        min = findMin(first, second, third);
+        min = findMin(first, second, third);//최솟값 찾아내주는 함수
         
-        findPath(row+min, column+1, MaxColumn);
+        findPath(row+min, column+1, MaxColumn);//최솟값 리턴값이 -1. 0, 1로 설정했기에 다음 경로 찾기 호출
         return;
     }
 
 }
 
-int findMin(int a, int b, int c){
-    if(a < b && a < c){
+int findMin(int a, int b, int c){//최솟값 찾는 함수
+    if(a < b && a < c){//a값이 같지않고 최소면 -1리턴
         return -1;
     }
-    else if(b <= a && b <= c){
+    else if(b <= a && b <= c){//b가 같거나 제일 작으면 0 리턴
         return 0;
     }
-    else if(c <= a && c < b){
+    else if(c <= a && c < b){//c가 a와 같거나 제일 작을경우 1 리턴
         return 1;
     }
 }
