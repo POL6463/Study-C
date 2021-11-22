@@ -13,7 +13,9 @@ struct RGB list[1000][1000] = {0}; //RGB 값을 저장할 구조체 배열 선�
 void readFileName(int *, int *, char *); //파일 이름을 입력받고 검사, row colum값을 받는 함수
 void findMaxMin(int *, int *, int, int); //배열에서 최대 최솟값 찾아내는 함수
 void loadGrayscale(int, int, int, int); //배열에서 rgb값으로 변환 후 구조체 배열에 입력하는 함수
+void findPath(int, int, int);
 void outputImage(char *, int, int); //ppm파일 작성하는 함수
+int findMin(int, int, int);
 
 int main(void){
     FILE *fp;
@@ -31,8 +33,8 @@ int main(void){
         exit(1);
     }
 
-    for(i = 0; i < column; i++){ //파일의 데이터를 순차적으로 이중배열에 입력
-        for(j = 0; j < row; j++){
+    for(i = 0; i < row; i++){ //파일의 데이터를 순차적으로 이중배열에 입력
+        for(j = 0; j < column; j++){
             if(feof(fp)){
                 printf("Error : End of file reached prior to getting all the required data\n"); //데이터의 수가 부족하면 에러 반환 후 종료
                 exit(1);
@@ -49,11 +51,15 @@ int main(void){
         exit(1);
     }
 
-    findMaxMin(&max, &min, column, row); //최대 최솟값 알아내는 함수 호출, max, min을 변경시켜야해서 참조에의한 호출
+    findMaxMin(&max, &min, row, column); //최대 최솟값 알아내는 함수 호출, max, min을 변경시켜야해서 참조에의한 호출
 
-    loadGrayscale(max, min, column, row); //RGB값으로 변환해 입력하는 함수 호출
+    loadGrayscale(max, min, row, column); //RGB값으로 변환해 입력하는 함수 호출
+
+    for(i = 0; i < row; i++){
+        findPath(i, 0, column);
+    }
     
-    outputImage(name, column, row); //파일 작성하는 함수 호출
+    outputImage(name, row, column); //파일 작성하는 함수 호출
 
 
     return 0;
@@ -91,7 +97,7 @@ void readFileName(int *row, int *column, char *name){
 
     temp = 0; 
     for(i = firstNumCounter -1; i >= 0; i--){
-        *row += firstNum[temp++] * pow(10, i);
+        *column += firstNum[temp++] * pow(10, i);
     } //앞부분 숫자 배열에 저장한걸 row 변수에 입력
 
 
@@ -106,7 +112,7 @@ void readFileName(int *row, int *column, char *name){
 
     temp = 0;
     for(i = secondNumCounter -1; i >= 0; i--){
-        *column += secondNum[temp++] * pow(10, i);
+        *row += secondNum[temp++] * pow(10, i);
     } //secondNum에 있는 숫자를 column에 저장
 }
 
@@ -141,6 +147,45 @@ void loadGrayscale(int max, int min, int column, int row){
             list[i][j].green = grayscale;
             list[i][j].blue = grayscale;
         }
+    }
+}
+
+void findPath(int row, int column, int MaxColumn){
+    int first, second, third, min;
+    
+    if(column == MaxColumn){
+        list[row][column].red = 252;
+        list[row][column].green = 25;
+        list[row][column].blue = 63;
+        
+        return;
+    }
+    else{
+        first = abs(arr[row][column] - arr[row-1][column+1]);
+        second = abs(arr[row][column] - arr[row][column+1]);
+        third = abs(arr[row][column] - arr[row+1][column+1]);
+
+        list[row][column].red = 252;
+        list[row][column].green = 25;
+        list[row][column].blue = 63;
+
+        min = findMin(first, second, third);
+        
+        findPath(row+min, column+1, MaxColumn);
+        return;
+    }
+
+}
+
+int findMin(int a, int b, int c){
+    if(a < b && a < c){
+        return -1;
+    }
+    else if(b <= a && b <= c){
+        return 0;
+    }
+    else if(c <= a && c < b){
+        return 1;
     }
 }
 
