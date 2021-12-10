@@ -34,5 +34,6 @@ int main(void){
         puts("파일 닫기 에러");
         exit(1);
     }
+    
     return 0;
 }
