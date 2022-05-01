@@ -1,0 +1,21 @@
+{
+  "id": "가계 고유 아아디",
+
+  "storeInfo": {
+    "storeName": "가게 이름",
+    "storeLocation": "경기도 시흥시 ...",
+    "storePhone": "010-0000-0000",
+    "storeTime": "텍스트로 설명?",
+    "updateDate": "2020-10-14",
+    "storePrifile": "사진주소",
+    "storePic": {
+      "1": "사진 주소",
+      "2": "사진 주소",
+      "3": "사진 주소"
+    },
+    "menuPic": {
+      "1": "메뉴주소",
+      "2": "메뉴주소"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "string",
+
+  "age": "24",
+
+  "성별": "male",
+
+  "store_list": {
+    "store_id_1": {
+      "curr_stamp": "현재 몇개 모았냐",
+      "stamp_history": {
+        "1": {
+          "date": "01 - 23 - 2022",
+          "amount": "갯수 몇개"
+        },
+        "2": {
+          "date": "01 - 23 - 2022",
+          "amount": "갯수 몇개"
+        }
+      }
+    },
+    "store_id_2": {
+      "curr_stamp": "현재 몇개 모았냐",
+      "stamp_history": {
+        "1": {
+          "date": "01 - 23 - 2022",
+          "amount": "갯수 몇개"
+        },
+        "2": {
+          "date": "01 - 23 - 2022",
+          "amount": "갯수 몇개"
+        }
+      }
+    },
+    "store_id_3": {
+      "curr_stamp": "현재 몇개 모았냐",
+      "stamp_history": {
+        "1": {
+          "date": "01 - 23 - 2022",
+          "amount": "갯수 몇개"
+        },
+        "2": {
+          "date": "01 - 23 - 2022",
+          "amount": "갯수 몇개"
+        }
+      }
+    }
+  }
+}
