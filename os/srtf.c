@@ -1,107 +1,157 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define timeStep 20
 
 typedef struct node_type{
-    int data;
+    int process_id;
+    int priority;
+    int computing_time;
+    int enter_time;
+    struct node_type *before;
     struct node_type *next;
 }node; //연결리스트로 쓸 구조체 선언
 
 typedef node *list; //구조체의 주소를 담는 변수 list선언
 
 int searchList(list, int);
-list insert(list, list, int, int);
+list insert(list, list, int, int, int, int);
 void showList(list);
+list searchPlace(list, list, int, int);
 
 
 int main(void){
     FILE *fp; //파일 주소 변수
     list head = NULL, tail = NULL; //앞뒤 구분을 위해 head, tail선언
-    int dat, count = 0, hit = 0;//dat = 데이터값, count = 총 몇개의 데이터가 들어왔는지, hit = hit하면 증가
-    int nums;//현재 연결리스트가 몇개 연결되어있는지
+    int time = 0;
+    int totalNode = 0;//현재 연결리스트가 몇개 연결되어있는지
+    int process_id, priority, computing_time, flag;
 
     fp = fopen("input.txt", "r"); //파일오픈
 
     while(1){
 
-        fscanf(fp, "%d", &dat); //파일에서 하나 꺼냄
-        if(dat == 99){// 99나오면 종료
+        fscanf(fp, "%d%d%d%d", &flag, &process_id, &priority, &computing_time); //파일에서 하나 꺼냄
+
+        if(flag == -1){// -1나오면 입력 그만 받기
             break;
-        }
-        
-        nums = searchList(head, dat); //hit인지 아닌지 search하는 함수, 리스트에 몇개들어있는지 반환
-        
-        if(nums == 5){
-            hit++;// num이 5이면 hit이기에 힛 증가
-        }
-        else if(nums == 0){//첫번째로 들어왔으면 공간 만들어주고 헤드로 지정
+        }else if(flag == 1){//1이 나오면
+            time += timeStep; //시간 단위만큼 증가
+            continue;
+        }else if(head == NULL){//큐가 비어있을때의 상황
             head = (list)malloc(sizeof(node));
-            head->data = dat;
+            head->process_id = process_id;
+            head->priority = priority;
+            head->computing_time = computing_time;
+            head->enter_time = time;
+            head->before = NULL;
             head->next = NULL;
             tail = head;
-        }
-        else{
-            tail = insert(head, tail, dat, nums);//나머지 들어왔을경우 insert 함수 호출
-            if(nums == 4){
-                head = head->next;//만약 4개있는상태에서 hit이아닌데이터가 들어왔을때 제일 앞의 head 하나 줄임
+            continue;
+        }else{//입력받은값 삽입 위해 insert함수 호출
+            tail = insert(head, tail, process_id, priority, computing_time, time);
+            if(head->before != NULL){ //만약 제일 앞부분으로 삽입되었을때 head 조정
+                head = head->before;
             }
-        }
-        //showList(head); //마지막으로 메모리에 있는 숫자들 출력
-        //printf("dat : %d\n", dat); 
 
-        count++;
+
+        }
+
+        
+
     }
 
     showList(head); //마지막으로 메모리에 있는 숫자들 출력
 
-    printf("적중률 = %d/%d\n", hit, count); //적중률 출력
    
     return 0;
 
 }
 
-int searchList(list head, int dat){//안에 데이터가 있는지 확인하는 함수
-    list temp;
-    int count = 0; //메모리에 데이터가 몇개 있는지 저장할 변수
+//노드 삽입하는 함수
+list insert(list head, list tail, int process_id, int priority, int computing_time, int enter_time){
 
+    list temp = NULL;
+    list insertPlace = NULL;//삽입할 위치의 다음 노드를 받아오는 변수 초기화
 
-    if(head == NULL){
-        return 0;
+    //받은값으로 공간 할당, 데이터 삽입
+    temp = (list)malloc(sizeof(node)); 
+    temp->process_id = process_id;
+    temp->priority = priority;
+    temp->computing_time = computing_time;
+    temp->enter_time = enter_time;
+    
+    //computing_time을 비교해서 삽입할 위치를 반환하는 searchPlace 함수 호출
+    insertPlace = searchPlace(head, tail, computing_time, priority);
+
+    if(insertPlace == head){ //넣어야 하는곳이 제일 처음이면
+        temp->next = head; //다음을 head였던 노드를 바라보게
+        temp->before = NULL; //이제 head 이므로 before는 널
+        head->before = temp;//제일 앞에 삽입했으므로 before에 저장
+        return tail;
     }
-    else{
-        temp = head;
-        while(temp != NULL){//연결리스트 끝까지
-
-            if(temp->data == dat){
-                return 5;//만약 데이터가 있으면 5를 리턴
-            }
-            else{
-                count++;//아니면 카운트를 계속 증가시킴
-            }
-
-            temp = temp->next;//다음 리스트로 이동
-        }
+    else if(insertPlace){//만약 리턴값이 null이 아닌 노드의 주소가 반환되었을떄
+        temp->next = insertPlace; //새로운 노드가 next로 삽입할 위치의 노드를 바라보게
+        temp->before = insertPlace->before; //사이에 삽입해야 하므로 이전값을 이전 노드의 이전값과 동일하게
+        insertPlace->before->next = temp; //이전노드가 새 노드를 바라보게
+        insertPlace->before = temp; //교환당하는 노드 앞에 새 노드 넣기
+        return tail;
+    }else{ //제일 마지막으로 넣어야 하면 - tail다음으로 삽입
+        temp->before = tail;
+        temp->next = NULL;
+        tail->next = temp;
+        tail = tail->next;
+        return tail;
     }
-    return count;//데이터가 몇개 있는지 반환
+
+    return tail;
 }
 
-list insert(list head, list tail, int dat, int nums){//메모리에 없을경우 데이터 입력
-    list temp = NULL;
+//남은시간 비교하고 삽입해야하는 위치의 노드의 주소를 반환해주는 함수
+list searchPlace(list head, list tail, int newNodeTime, int newNodePriority){
+    
+    list temp = head;
+    while(temp->next != NULL){ //리스트의 끝까지 반복문으로 탐색
 
-    temp = (list)malloc(sizeof(node));//공간 할당, temp로 지정
-    temp->data = dat;//데이터 넣고
-    temp->next = NULL;//마지막이기에 다음은 NULL
-    tail->next = temp;//이전 마지막이 temp를 가르키게 함
-    tail = tail->next;//tail을 마지막으로 설정
-    return tail;//tail 주소 반환
+        if(temp->computing_time > newNodeTime){//새로 들어오는 노드의 시간이 기존것보다 짧다면
+            return temp; //해당 노드의 주소를 반환
+        }
+        else if(temp->computing_time == newNodeTime){//만약 남은시간이 같다면?
+            if(temp->priority < newNodePriority){ //priority를 비교해서 새 노드가 더 크다면 앞으로 배치
+                return temp;
+            }
+            else{
+                temp = temp->next; //아니라면 다음노드와 비교
+            }
+            temp = temp->next;
+        }else{
+            temp = temp->next; //남은 시간이 더 크므로 다음으로 이동
+            
+        }
+    }
 
+    //제일 마지막 노드와 비교하는 부분
+    if(temp->computing_time > newNodeTime){//tail의 시간과 비교
+        return temp; //tail앞으로 삽입해야 하는경우
+    }else{
+        return NULL; //제일 뒤에 삽입해야 하는경우
+    }
+
+    return NULL;
 
 }
 
 void showList(list head){
     list temp = head;
     while(temp != NULL){
-        printf("%d  ", temp->data);
+        printf("%d  ", temp->computing_time);
+        
         temp = temp->next;
     }
+
     printf("\n");
+    temp = head;
+    while(temp != NULL){
+        printf("%d  ", temp->enter_time);
+        temp = temp->next;
+    }
 }
