@@ -33,11 +33,11 @@ int main(void)
     FILE *fwp;                                      //출력파일 주소 변수
     list head = NULL, tail = NULL;                  //앞뒤 구분을 위해 head, tail선언
     int time_loc = 0;                               //현지 시간이 얼마나 지났는지 저장할 변수
-    int totalNode = 0;                              //현재 연결리스트가 몇개 연결되어있는지
     int process_id, priority, computing_time, flag; // 입력파일로부터 받을값 변수 선언
 
     fp = fopen("input.txt", "r");   //입력 파일 오픈
     fwp = fopen("output.txt", "w"); // 출력 파일 오픈
+    fprintf(fwp, "Process_id    priority    computing_time    turn_around time\n");
     while (1)
     {
         fscanf(fp, "%d%d%d%d", &flag, &process_id, &priority, &computing_time); //파일에서 하나 꺼냄
@@ -166,11 +166,10 @@ list calculate(list head, int time, FILE *fwp)
     while (temp != NULL)
     { //시간 20만큼 연산
         if (head->time_left <= workTime)
-        { //만약 남은시간이 20보다 적으면
-
-            time += temp->time_left;                                                                                          //프로그램이 시작하고 진행된 시간 해당 프로세스의 남은 시간만큼 추가                                                                                          //현재 시간 남은만큼 더하고
-            turn_around_time = time - temp->enter_time;                                                                       //핸재 프로그램이 진행된 시간에 들어왔을때의 시간을 빼서 turn around time 계산                                                                      //반환시간은 현재시간 - 들어온 시간
-            fprintf(fwp, "%d    %d    %d    %d\n", temp->process_id, temp->priority, temp->computing_time, turn_around_time); //프로세스가 종료되었으므로 출력파일에 작성
+        {                                                                                                                //만약 남은시간이 20보다 적으면
+            time += temp->time_left;                                                                                     //프로그램이 시작하고 진행된 시간 해당 프로세스의 남은 시간만큼 추가                                                                                          //현재 시간 남은만큼 더하고
+            turn_around_time = time - temp->enter_time;                                                                  //핸재 프로그램이 진행된 시간에 들어왔을때의 시간을 빼서 turn around time 계산                                                                      //반환시간은 현재시간 - 들어온 시간
+            fprintf(fwp, "%2d%16d%16d%16d\n", temp->process_id, temp->priority, temp->computing_time, turn_around_time); //프로세스가 종료되었으므로 출력파일에 작성
             workTime -= temp->time_left;
             if (temp->next == NULL)
             {
@@ -184,7 +183,6 @@ list calculate(list head, int time, FILE *fwp)
         else
         {
             temp->time_left -= workTime; //시간이 지나도 프로세스가 끝나지 않았으므로 남은 시간 차감.
-
             workTime = 0;
             break;
         }
@@ -197,9 +195,9 @@ void finalProcess(list head, int time, FILE *fwp)
     int turn_around_time;
     while (head != NULL) //리스트가 빌때까지 진행
     {
-        time += head->time_left;                                                                                          //로컬시간 프로세스 하나가 끝날때만큼 증가
-        turn_around_time = time - head->enter_time;                                                                       // turn_around_time 계산
-        fprintf(fwp, "%d    %d    %d    %d\n", head->process_id, head->priority, head->computing_time, turn_around_time); //출력 한번 해주고
+        time += head->time_left;                                                                                     //로컬시간 프로세스 하나가 끝날때만큼 증가
+        turn_around_time = time - head->enter_time;                                                                  // turn_around_time 계산
+        fprintf(fwp, "%2d%16d%16d%16d\n", head->process_id, head->priority, head->computing_time, turn_around_time); //출력 한번 해주고
 
         head = head->next; // Head 다음으로 이동
     }
